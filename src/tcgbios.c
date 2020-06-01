@@ -1146,28 +1146,32 @@ tpm_startup(void)
 void
 tpm_setup(void)
 {
+    dprintf(1, "%s\n", __func__);
     if (!CONFIG_TCGBIOS)
         return;
 
     int ret = tpm_tpm2_probe();
+    dprintf(1, "%s tpm_tpm2_probe ret %d\n", __func__, ret);
     if (ret) {
         ret = tpm_tcpa_probe();
+        dprintf(1, "%s tpm_tcpa_probe ret %d\n", __func__, ret);
         if (ret)
             return;
     }
 
     TPM_version = tpmhw_probe();
+    dprintf(1, "%s tpmhw_probe ret %d\n", __func__, TPM_version);
     if (TPM_version == TPM_VERSION_NONE)
         return;
 
-    dprintf(DEBUG_tcg,
+    dprintf(1,
             "TCGBIOS: Detected a TPM %s.\n",
              (TPM_version == TPM_VERSION_1_2) ? "1.2" : "2");
 
     TPM_working = 1;
 
-    if (runningOnXen())
-        return;
+    //if (runningOnXen())
+    //    return;
 
     ret = tpm_startup();
     if (ret)
